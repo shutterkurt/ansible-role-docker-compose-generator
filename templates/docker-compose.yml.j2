@@ -1,7 +1,7 @@
 # {{ ansible_managed }}
 ---
 version: "{{ compose_schema_version | default('2') }}"
-{% if volumes is defined %}
+{% if (volumes is defined) and (volumes | length > 0) %}
 volumes:
   {{ volumes }}
 {% endif %}
@@ -11,6 +11,9 @@ services:
   {{ container.service_name }}:
     image: {{ container.image }}
     container_name: {{ container.container_name | default(container.service_name) }}
+{% if container.user is defined %}
+    user: {{ container.user }}
+{% endif %}
 {% if container.extra_hosts is defined %}
     extra_hosts:
 {% for host in container.extra_hosts %}
